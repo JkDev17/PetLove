@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: EUREKA-SERVICE
+
+server:
+  port: 8761
+
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    instance:
+    lease-renewal-interval-in-seconds=0:

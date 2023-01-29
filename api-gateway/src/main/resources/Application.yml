@@ -1,0 +1,66 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: USERS
+          uri: lb://USERS
+          predicates:
+            - Path=/users/**
+        - id: USERSCOMMENTSSERVICE
+          uri: lb://USERSCOMMENTSSERVICE
+          predicates:
+            - Path=/comments/**
+        - id: PETS
+          uri: lb://PETS
+          predicates:
+            - Path=/pets/**
+        - id: BREEDERS
+          uri: lb://BREEDERS
+          predicates:
+            - Path=/breeders/**
+        - id: BREEDERRATINGSERVICE
+          uri: lb://BREEDERRATINGSERVICE
+          predicates:
+          - Path=/breeder-rating-service/**
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      serviceA:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
